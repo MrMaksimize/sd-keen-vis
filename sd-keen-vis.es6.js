@@ -26,7 +26,7 @@
         analysisType: {
             type: String
         },
-        timeFrame: {
+        timeframe: {
             type: String
         },
         interval: {
@@ -44,7 +44,11 @@
     ready: function() {
         Keen.ready(function() {
             console.log('Keen ready.');
-        });
+            this._initClient();
+        }.bind(this));
+    },
+    attached: function() {
+       this._updateQuery();
     },
     _initClient: function() {
         console.log('initClient');
@@ -54,30 +58,32 @@
         });
     },
     _updateQuery: function() {
-        this.query = new Keen.Query(this.analysisType, {
-            event_collection: this.collection,
-            timeframe: this.timeFrame,
-            //targetProperty: this.property,
-            interval: this.interval
-            //groupBy: this.group,
-            //filters: this.filters
-        });
-        this._runQuery();
+        if (this.client) {
+            this.query = new Keen.Query(this.analysisType, {
+                event_collection: this.collection,
+                timeframe: this.timeframe,
+                //targetProperty: this.property,
+                interval: this.interval
+                //groupBy: this.group,
+                //filters: this.filters
+            });
+            console.log(this.query);
+            this._runQuery();
+        }
     },
     _runQuery: function() {
-        if (!this.client) {
-            this._initClient();
+        if (this.client) {
+            this.client.run(this.query, function(err, res){
+                if (err) {
+                    // there was an error!
+                    console.log('Stupid error.')
+                    console.log(err);
+                }
+                else {
+                    console.log(res)
+                }
+            });
         }
-        this.client.run(this.query, function(err, res){
-            if (err) {
-                // there was an error!
-                console.log('Stupid error.')
-                console.log(err);
-            }
-            else {
-                console.log(res.result)
-            }
-        });
     },
 
     /**
