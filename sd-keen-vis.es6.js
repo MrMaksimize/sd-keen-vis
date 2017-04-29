@@ -51,11 +51,13 @@
             type: String,
             value: 'Hello'
         },
-        chartYTitle: {
-            type: String,
-            value: '',
+        chartYAxisConfig: {
+            type: Object,
             notify: true,
-            readOnly: true
+            readOnly: true,
+            value: function() {
+                return {}
+            }
         },
         chartData: {
             type: Object,
@@ -77,7 +79,6 @@
         };
     },
     attached: function() {
-       console.log('attached');
        this._configureChart();
        this._updateQuery();
     },
@@ -90,7 +91,7 @@
        this._updateQuery();
     },
     _configureChart: function() {
-        this._setChartYTitle({
+        this._setChartYAxisConfig({
             "title": this.yTitle,
             "titleTruncation": false
         });
