@@ -26,18 +26,22 @@
   ],
   "dependencies": {
     "polymer": "^1.7.1",
-    "px-theme": "^2.0.3"
+    "px-theme": "^2.0.3",
+    "px-vis": "^1.1.9",
+    "px-simple-area-chart": "^1.0.0",
+    "moment": "^2.18.1",
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "px-meta-buttons-design": "^0.6.2",
-        "px-meta-lists-design": "^0.4.1",
-        "px-headings-design": "^0.3.3",
-        "px-tables-design": "^1.1.5",
-        "px-layout-design": "^0.4.3",
-        "px-toggle-design": "^1.1.4",
-        "px-box-design": "^0.4.2",
-        "px-code-design": "^1.1.3",
-        "px-flag-design": "^0.3.2",
+    "px-meta-lists-design": "^0.4.1",
+    "px-headings-design": "^0.3.3",
+    "px-tables-design": "^1.1.5",
+    "px-layout-design": "^0.4.3",
+    "px-toggle-design": "^1.1.4",
+    "px-box-design": "^0.4.2",
+    "px-code-design": "^1.1.3",
+    "px-flag-design": "^0.3.2",
     "px-starter-kit-design": "^0.7.3",
     "px-demo": "^1.3.2"
   }

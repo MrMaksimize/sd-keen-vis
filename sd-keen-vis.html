@@ -25,9 +25,19 @@ REPLACE THIS TEXT WITH A COMPONENT DESCRIPTION
     <style include="sd-keen-vis-styles"></style>
     <a href="javascript:" on-click="handleClick">Click here to increment counter:</a>
     <span>{{counterValue}}</span>
-    <div id="keen-board"></div>
+    <div id="chartcanvas">
+        <px-simple-area-chart
+            prevent-resize="true"
+            width="700"
+            height="450"
+            x-axis-type="time"
+            chart-data='{{ chartData }}' series-config='{{ seriesConfig }}'>
+        </px-simple-area-chart>
+    </div>
   </template>
 </dom-module>
 
-<script src="./bower_components/keen-js/dist/keen-query.js"></script>
+<script src="./bower_components/keen-js/dist/keen.min.js"></script>
+<script src="./bower_components/moment/min/moment.min.js"></script>
+<script src="./bower_components/lodash/dist/lodash.min.js"></script>
 <script src="dist/sd-keen-vis.js"></script>

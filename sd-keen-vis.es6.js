@@ -31,6 +31,18 @@
         },
         interval: {
             type: String
+        },
+        chartData: {
+            type: Object,
+            notify: true,
+            reflectToAttribute: true
+            //readOnly: true
+        },
+        seriesConfig: {
+            type: Object,
+            notify: true,
+            reflectToAttribute: true
+            //readOnly: true
         }
     },
     observers: [
@@ -44,10 +56,10 @@
     ready: function() {
         Keen.ready(function() {
             console.log('Keen ready.');
-            this._initClient();
         }.bind(this));
     },
     attached: function() {
+       console.log('attached');
        this._updateQuery();
     },
     _initClient: function() {
@@ -58,7 +70,11 @@
         });
     },
     _updateQuery: function() {
-        if (this.client) {
+        if (!this.client) {
+            this._initClient()
+        }
+        else {
+            console.log('update query');
             this.query = new Keen.Query(this.analysisType, {
                 event_collection: this.collection,
                 timeframe: this.timeframe,
@@ -68,6 +84,7 @@
                 //filters: this.filters
             });
             console.log(this.query);
+            console.log(this.$.chartcanvas);
             this._runQuery();
         }
     },
@@ -76,13 +93,42 @@
             this.client.run(this.query, function(err, res){
                 if (err) {
                     // there was an error!
-                    console.log('Stupid error.')
                     console.log(err);
                 }
                 else {
-                    console.log(res)
+                    console.log(res.result);
+                    var result = res.result;
+                    console.log(result);
+                    result = _.map(result, function(n) {
+                        console.log(n);
+                        n = {
+                            'x': parseInt(moment(n.timeframe.start).format('x')),
+                            'y': n.value
+                        }
+                        return n;
+                    })
+                    console.log(result);
+                    var seriesConfig = {
+                        "seriesKey": {  //seriesKey is a unique identifier for the configuration
+                            "type": "line",  //line or scatter
+                            "name": "My Series",  //human readable name
+                            "x": "x",  //index or key name for independent variable
+                            "y": "y",  //index or key name for dependent variable
+                            //"xAxisUnit": "Volt", //Unit to be used for the X axis. Can be ignored if x axis is time based
+                            "yAxisUnit": "Oranges", //unit to be used for the Y axis.
+                            //"color": "rgb(0,0,0)", //color you want the chart
+                            "axis": {
+                                "id": "AXIS_ID",   //a unique identifier
+                                "side": "left",    //the side that you want the axis to draw on, `left` or `right`
+                                "number": 1       //the order of the axis on each side
+                            }
+                        }
+                    }
+
+                    this.set('seriesConfig', seriesConfig);
+                    this.set('chartData', result);
                 }
-            });
+            }.bind(this));
         }
     },
 
