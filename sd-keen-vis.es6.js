@@ -76,12 +76,6 @@
             seriesConfig: {}
         };
     },
-    ready: function() {
-        Keen.ready(function() {
-            // TODO -- maybe move this out to updateQuery
-            console.log('Keen ready');
-        }.bind(this));
-    },
     attached: function() {
        console.log('attached');
        this._configureChart();
@@ -106,16 +100,18 @@
             this._initClient()
         }
         else {
-            this.query = new Keen.Query(this.analysisType, {
-                event_collection: this.collection,
-                timeframe: this.timeframe,
-                targetProperty: this.targetProperty,
-                interval: this.interval,
-                groupBy: this.group,
-                //filters: this.filters
-            });
-            console.log(this.query);
-            this._runQuery();
+            Keen.ready(function() {
+                this.query = new Keen.Query(this.analysisType, {
+                    event_collection: this.collection,
+                    timeframe: this.timeframe,
+                    targetProperty: this.targetProperty,
+                    interval: this.interval,
+                    groupBy: this.group,
+                    filters: this.filters
+                });
+                console.log(this.query);
+                this._runQuery();
+            }.bind(this));
         }
     },
     _runQuery: function() {
