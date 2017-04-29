@@ -35,7 +35,10 @@
         chartData: {
             type: Object,
             notify: true,
-            reflectToAttribute: true
+            reflectToAttribute: true,
+            value: function() {
+                return {}
+            }
             //readOnly: true
         },
         seriesConfig: {
@@ -46,7 +49,6 @@
         }
     },
     observers: [
-        //TODO -- these three should be an object
         '_initClient(project, key)',
         '_updateQuery(collection, analysisType)'
     ],
@@ -55,7 +57,8 @@
     },
     ready: function() {
         Keen.ready(function() {
-            console.log('Keen ready.');
+            // TODO -- maybe move this out to updateQuery
+            console.log('Keen ready');
         }.bind(this));
     },
     attached: function() {
@@ -68,13 +71,13 @@
             projectId: this.project,
             readKey: this.readKey
         });
+       this._updateQuery();
     },
     _updateQuery: function() {
         if (!this.client) {
             this._initClient()
         }
         else {
-            console.log('update query');
             this.query = new Keen.Query(this.analysisType, {
                 event_collection: this.collection,
                 timeframe: this.timeframe,
@@ -100,14 +103,12 @@
                     var result = res.result;
                     console.log(result);
                     result = _.map(result, function(n) {
-                        console.log(n);
                         n = {
                             'x': parseInt(moment(n.timeframe.start).format('x')),
                             'y': n.value
                         }
                         return n;
                     })
-                    console.log(result);
                     var seriesConfig = {
                         "seriesKey": {  //seriesKey is a unique identifier for the configuration
                             "type": "line",  //line or scatter
