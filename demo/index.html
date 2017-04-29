@@ -10,7 +10,6 @@
 <link rel="import" href="../../px-demo/px-demo-props.html" />
 <link rel="import" href="../../px-demo/px-demo-interactive.html" />
 <link rel="import" href="../../px-demo/px-demo-component-snippet.html" />
-<link rel="import" href="../../px-simple-area-chart/px-simple-area-chart.html" />
 
 <!-- Imports for this componnent -->
 <link rel="import" href="../../px-demo/css/px-demo-styles.html" />
@@ -45,18 +44,16 @@
           analysis-type="count"
           timeframe="this_14_days"
           interval="daily"
-          chart-data='{{ chartData }}'
         >
         </sd-keen-vis>
 
-        <px-simple-area-chart
+        <!--<px-simple-area-chart
             prevent-resize="true"
             width="450"
             height="450"
             x-axis-type="time"
             chart-data='[[ chartData ]]'>
-            <!--series-config='{{ seriesConfig }}'>-->
-        </px-simple-area-chart>
+        </px-simple-area-chart>-->
       </px-demo-component>
       <!-- END Component ------------------------------------------------------>
 

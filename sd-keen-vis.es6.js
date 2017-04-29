@@ -23,6 +23,21 @@
         collection: {
             type: String
         },
+        targetProperty: {
+            type: String
+        },
+        groupBy: {
+            type: Array,
+            value: function() {
+                return []
+            }
+        },
+        filters: {
+            type: Array,
+            value: function() {
+                return []
+            }
+        },
         analysisType: {
             type: String
         },
@@ -32,20 +47,24 @@
         interval: {
             type: String
         },
+        yTitle: {
+            type: String,
+            value: 'Hello'
+        },
+        chartYTitle: {
+            type: String,
+            value: '',
+            notify: true,
+            readOnly: true
+        },
         chartData: {
             type: Object,
             notify: true,
             reflectToAttribute: true,
             value: function() {
                 return {}
-            }
-            //readOnly: true
-        },
-        seriesConfig: {
-            type: Object,
-            notify: true,
-            reflectToAttribute: true
-            //readOnly: true
+            },
+            readOnly: true
         }
     },
     observers: [
@@ -53,7 +72,9 @@
         '_updateQuery(collection, analysisType)'
     ],
     created: function() {
-        this.config = {};
+        this.chartConfig = {
+            seriesConfig: {}
+        };
     },
     ready: function() {
         Keen.ready(function() {
@@ -63,6 +84,7 @@
     },
     attached: function() {
        console.log('attached');
+       this._configureChart();
        this._updateQuery();
     },
     _initClient: function() {
@@ -73,6 +95,12 @@
         });
        this._updateQuery();
     },
+    _configureChart: function() {
+        this._setChartYTitle({
+            "title": this.yTitle,
+            "titleTruncation": false
+        });
+    },
     _updateQuery: function() {
         if (!this.client) {
             this._initClient()
@@ -81,13 +109,12 @@
             this.query = new Keen.Query(this.analysisType, {
                 event_collection: this.collection,
                 timeframe: this.timeframe,
-                //targetProperty: this.property,
-                interval: this.interval
-                //groupBy: this.group,
+                targetProperty: this.targetProperty,
+                interval: this.interval,
+                groupBy: this.group,
                 //filters: this.filters
             });
             console.log(this.query);
-            console.log(this.$.chartcanvas);
             this._runQuery();
         }
     },
@@ -101,33 +128,14 @@
                 else {
                     console.log(res.result);
                     var result = res.result;
-                    console.log(result);
                     result = _.map(result, function(n) {
                         n = {
-                            'x': parseInt(moment(n.timeframe.start).format('x')),
+                            'x': parseInt(moment(n.timeframe.end).format('x')),
                             'y': n.value
                         }
                         return n;
                     })
-                    var seriesConfig = {
-                        "seriesKey": {  //seriesKey is a unique identifier for the configuration
-                            "type": "line",  //line or scatter
-                            "name": "My Series",  //human readable name
-                            "x": "x",  //index or key name for independent variable
-                            "y": "y",  //index or key name for dependent variable
-                            //"xAxisUnit": "Volt", //Unit to be used for the X axis. Can be ignored if x axis is time based
-                            "yAxisUnit": "Oranges", //unit to be used for the Y axis.
-                            //"color": "rgb(0,0,0)", //color you want the chart
-                            "axis": {
-                                "id": "AXIS_ID",   //a unique identifier
-                                "side": "left",    //the side that you want the axis to draw on, `left` or `right`
-                                "number": 1       //the order of the axis on each side
-                            }
-                        }
-                    }
-
-                    this.set('seriesConfig', seriesConfig);
-                    this.set('chartData', result);
+                    this._setChartData(result);
                 }
             }.bind(this));
         }

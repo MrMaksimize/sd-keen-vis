@@ -30,7 +30,8 @@
     "px-vis": "^1.1.9",
     "px-simple-area-chart": "^1.0.0",
     "moment": "^2.18.1",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "px-vis-timeseries": "^1.1.1"
   },
   "devDependencies": {
     "px-meta-buttons-design": "^0.6.2",

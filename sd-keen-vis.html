@@ -4,7 +4,7 @@
     'gulp serve' (or similar server setup) to enable correct finding of bower dependencies for local runs.
 -->
 <link rel="import" href="../polymer/polymer.html"/>
-
+<link rel="import" href="../px-vis-timeseries/px-vis-timeseries.html" />
 <link rel="import" href="css/sd-keen-vis-styles.html">
 
 <!--
@@ -25,6 +25,42 @@ REPLACE THIS TEXT WITH A COMPONENT DESCRIPTION
     <style include="sd-keen-vis-styles"></style>
     <a href="javascript:" on-click="handleClick">Click here to increment counter:</a>
     <span>{{counterValue}}</span>
+
+    <!--<px-simple-area-chart
+        prevent-resize="true"
+        width="450"
+        height="450"
+        x-axis-type="time"
+        chart-data='[[ chartData ]]'>
+    </px-simple-area-chart>-->
+    <px-vis-timeseries
+        prevent-resize="true"
+        debounce-resize-timing="250"
+        width="700"
+        height="450"
+        progressive-rendering-points-per-frame="16000"
+        progressive-rendering-min-frames="1"
+        chart-horizontal-alignment="center"
+        chart-vertical-alignment="center"
+        margin='{"top":30,"bottom":60,"left":65,"right":65}'
+        show-tooltip="true"
+        tooltip-config='{}'
+        hide-register="true"
+        register-config='{}'
+        selection-type="xy"
+        chart-data='[[ chartData ]]'
+        series-config='{"y":{"name":"hits","x":"x","y":"y"}}'
+        chart-extents='{"x":["dynamic","dynamic"],"y":["dynamic","dynamic"]}'
+        event-data='[]'
+        event-config='{}'
+        threshold-data='[]'
+        threshold-config='{}'
+        x-axis-config='{"title":"Date"}'
+        y-axis-config='[[ chartYTitle ]]'
+        dynamic-menu-config='[]'
+        toolbar-config='{"config":{"advancedZoom":false,"pan":true,"tooltip":true}}'
+        navigator-config='{"xAxisConfig":{"tickFormat":"%b %d"}}'>
+    </px-vis-timeseries>
   </template>
 </dom-module>
 
