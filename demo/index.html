@@ -42,6 +42,7 @@
           read-key="f9cbef55-18d4-440d-9dbf-f89baf9c0df2"
           collection="s3_seshat.datasd.org_logs"
           analysis-type="count"
+          group-by='["log.key", "eventMeta.eventName"]'
           timeframe="this_14_days"
           interval="daily"
         >

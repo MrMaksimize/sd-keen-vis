@@ -107,7 +107,7 @@
                     timeframe: this.timeframe,
                     targetProperty: this.targetProperty,
                     interval: this.interval,
-                    groupBy: this.group,
+                    groupBy: this.groupBy,
                     filters: this.filters
                 });
                 console.log(this.query);
@@ -124,19 +124,55 @@
                 }
                 else {
                     console.log(res.result);
-                    var result = res.result;
-                    result = _.map(result, function(n) {
+                    window.result = res.result;
+                    var result = this._processResult(res.result)
+                    console.log(result);
+                    this._setChartData(result);
+                    /*result = _.map(result, function(n) {
                         n = {
                             'x': parseInt(moment(n.timeframe.end).format('x')),
                             'y': n.value
                         }
                         return n;
-                    })
-                    this._setChartData(result);
+                    })*/
                 }
             }.bind(this));
         }
     },
+    _processResult: function(result) {
+        result = _.map(result, function(n) {
+            // Intervals will automatically set x to timeseries.
+            var x = ''
+            if (this.interval)
+                var x = parseInt(moment(n.timeframe.end).format('x'))
+            //else
+            //    x = ''
+
+            // Check for grouping as value with groups comes back as array.
+            if (_.isArray(n.value)) {
+                var preval = _.map(n.value, function(v) {
+                    var keys = _.pull(_.keys(v), 'result')
+                    var y_str = _.reduce(keys, function(y_str, k) {
+                        return y_str + v[k]
+                    }, '')
+                    v['y_str'] = y_str;
+                    return v;
+                });
+                var chartData = _.reduce(preval, function(result, value, key) {
+                    result[value.y_str] = value.result;
+                    return result;
+                }, {});
+                chartData['x'] = x
+                return chartData;
+            }
+            else
+                return {'x': x, 'y': n.value}
+
+        }.bind(this));
+
+        return result;
+    },
+
 
     /**
     * Handles click on the element defined in 'on-click' on the template.
