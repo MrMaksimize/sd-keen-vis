@@ -48,15 +48,39 @@
             type: String
         },
         yTitle: {
-            type: String,
-            value: 'Hello'
+            type: String
         },
+        // TODO get rid of this.
+        axisExtents: {
+            type: Object,
+            notify: true,
+            value: function() {
+                return {"x":["dynamic","dynamic"],"y":["dynamic","dynamic"]};
+            }
+        },
+        // Anything prefixed with chart = output.
         chartYAxisConfig: {
             type: Object,
             notify: true,
             readOnly: true,
             value: function() {
                 return {}
+            }
+        },
+        chartExtents: {
+            type: Object,
+            notify: true,
+            readOnly: true,
+            value: function() {
+                return {"x":["dynamic","dynamic"],"y":["dynamic","dynamic"]};
+            }
+        },
+        chartSeriesConfig: {
+            type: Object,
+            notify: true,
+            readOnly: true,
+            value: function() {
+                return {};
             }
         },
         chartData: {
@@ -74,12 +98,9 @@
         '_updateQuery(collection, analysisType)'
     ],
     created: function() {
-        this.chartConfig = {
-            seriesConfig: {}
-        };
     },
     attached: function() {
-       this._configureChart();
+       this._configureChartDefaults();
        this._updateQuery();
     },
     _initClient: function() {
@@ -90,12 +111,16 @@
         });
        this._updateQuery();
     },
-    _configureChart: function() {
+    _configureChartDefaults: function() {
         this._setChartYAxisConfig({
-            "title": this.yTitle,
+            "title": this.yTitle || this.analysisType,
             "titleTruncation": false
         });
+        this._setChartExtents(this.axisExtents)
+        // TODO -- look at series config for ymax / ymin
+
     },
+
     _updateQuery: function() {
         if (!this.client) {
             this._initClient()
@@ -123,21 +148,42 @@
                     console.log(err);
                 }
                 else {
-                    console.log(res.result);
-                    window.result = res.result;
+                    console.log(res);
                     var result = this._processResult(res.result)
-                    console.log(result);
                     this._setChartData(result);
-                    /*result = _.map(result, function(n) {
-                        n = {
-                            'x': parseInt(moment(n.timeframe.end).format('x')),
-                            'y': n.value
-                        }
-                        return n;
-                    })*/
-                }
+                    this._buildSeriesConfig();
+               }
             }.bind(this));
         }
+    },
+    _buildResultRanges: function(result) {
+        // TODO -- non grouped charts
+        var combined = {};
+        var metrics = {};
+        _.forEach(result, function(ts_group) {
+            _.forEach(ts_group, function(value, key) {
+                if (!combined[key]) {
+                    combined[key] = []
+                    combined[key].push(value)
+                }
+                else {
+                    combined[key].push(value)
+                }
+            })
+        });
+        metrics['grouped'] = _.reduce(combined, function(result, value, key) {
+            result[key] = {
+                'max': _.max(value),
+                'min': _.min(value),
+                'mean': _.mean(value)
+            }
+            if (result[key]['max'] == 0)
+                console.log(key);
+            return result;
+        }, {})
+
+        return metrics;
+
     },
     _processResult: function(result) {
         result = _.map(result, function(n) {
@@ -145,15 +191,15 @@
             var x = ''
             if (this.interval)
                 var x = parseInt(moment(n.timeframe.end).format('x'))
-            //else
-            //    x = ''
 
             // Check for grouping as value with groups comes back as array.
             if (_.isArray(n.value)) {
                 var preval = _.map(n.value, function(v) {
                     var keys = _.pull(_.keys(v), 'result')
                     var y_str = _.reduce(keys, function(y_str, k) {
-                        return y_str + v[k]
+                        var str = (y_str + v[k]).replace(/\.|\//g, '')
+                        console.log(str)
+                        return str
                     }, '')
                     v['y_str'] = y_str;
                     return v;
@@ -171,6 +217,22 @@
         }.bind(this));
 
         return result;
+    },
+    _buildSeriesConfig: function() {
+        console.log(this._buildResultRanges(this.chartData));
+        console.log(this.chartData);
+        const seriesConfig = _.reduce(this.chartData[0], function(result, value, key) {
+            result[key] = {
+                "name": key,
+                "x": "x",
+                "y": key
+            };
+            return result;
+        }, {});
+
+        console.log(seriesConfig);
+        this._setChartSeriesConfig(seriesConfig);
+
     },
 
 

@@ -43,16 +43,12 @@ REPLACE THIS TEXT WITH A COMPONENT DESCRIPTION
         chart-horizontal-alignment="center"
         chart-vertical-alignment="center"
         margin='{"top":30,"bottom":60,"left":65,"right":65}'
-        show-tooltip="true"
-        tooltip-config='{}'
-        hide-register="true"
         register-config='{}'
         selection-type="xy"
+        disable-navigator='true'
         chart-data='[[ chartData ]]'
-        series-config='{"y":{"name":"hits","x":"x","y":"y"},
-        "ObjectCreated:Putdsd/permits_issued_ytd_datasd.csv": {"name": "s", "x":"x",
-        "y":"ObjectCreated:Putdsd/permits_issued_ytd_datasd.csv"}}'
-        chart-extents='{"x":["dynamic","dynamic"],"y":["dynamic","dynamic"]}'
+        series-config='[[ chartSeriesConfig ]]'
+        chart-extents='[[ chartExtents ]]'
         event-data='[]'
         event-config='{}'
         threshold-data='[]'
@@ -63,6 +59,10 @@ REPLACE THIS TEXT WITH A COMPONENT DESCRIPTION
         toolbar-config='{"config":{"advancedZoom":false,"pan":true,"tooltip":true}}'
         navigator-config='{"xAxisConfig":{"tickFormat":"%m-%d"}}'>
     </px-vis-timeseries>
+    <!--        include-all-series="true"
+        show-tooltip="true"
+        tooltip-config='{}'
+    -->
   </template>
 </dom-module>
 
